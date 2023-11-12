@@ -17,21 +17,23 @@ use Ayzrix\SimpleFaction\Main;
 use Ayzrix\SimpleFaction\Utils\Utils;
 use pocketmine\scheduler\AsyncTask;
 
+use pmmp\thread\ThreadSafeArray;
+
 class QueryTask extends AsyncTask {
 
-    private $provider;
-    private $db;
-    private $text;
+    private string $provider;
+    private ThreadSafeArray $db;
+    private string $text;
 
     public function __construct(string $text) {
         $this->provider = Utils::getProvider();
         $this->text = $text;
         if ($this->provider === "mysql") {
-            $this->db = array(Utils::getIntoConfig("mysql_address"), Utils::getIntoConfig("mysql_user"), Utils::getIntoConfig("mysql_password"), Utils::getIntoConfig("mysql_db"));
-        } else $this->db = array(Main::getInstance()->getDataFolder() . "SimpleFaction.db");
+            $this->db = ThreadSafeArray::fromArray(array(Utils::getIntoConfig("mysql_address"), Utils::getIntoConfig("mysql_user"), Utils::getIntoConfig("mysql_password"), Utils::getIntoConfig("mysql_db")));
+        } else $this->db = ThreadSafeArray::fromArray(array(Main::getInstance()->getDataFolder() . "SimpleFaction.db"));
     }
 
-    public function onRun() {
+    public function onRun(): void {
         $provider = $this->provider;
 
         switch ($provider) {

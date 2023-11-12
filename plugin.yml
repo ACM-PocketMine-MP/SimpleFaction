@@ -1,7 +1,13 @@
 name: SimpleFaction
-author: Ayzrix
+authors: [fernanACM, Ayzrix]
 description: SimpleFaction plugin
-version: 1.6.8
+version: 2.0.0-ACM
 main: Ayzrix\SimpleFaction\Main
 softdepend: [EconomyAPI]
-api: [3.0.0]
+api: [5.3.0]
+
+permissions:
+  simplefaction.cmd:
+    default: true
+  simplefaction.admin:
+    default: op

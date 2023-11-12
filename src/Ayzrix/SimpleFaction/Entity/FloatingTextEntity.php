@@ -5,32 +5,40 @@ namespace Ayzrix\SimpleFaction\Entity;
 use Ayzrix\SimpleFaction\API\FactionsAPI;
 use Ayzrix\SimpleFaction\Utils\Utils;
 use pocketmine\entity\Entity;
-use pocketmine\entity\EntityIds as Ids;
+use pocketmine\entity\EntitySizeInfo;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
-class FloatingTextEntity extends Entity {
+class FloatingTextEntity extends Entity{
 
-    const NETWORK_ID = Ids::NPC;
-    public $height = 0.1;
-    public $width = 0.1;
-    public $gravity = 0;
+    public float $height = 0.1;
+    public float $width = 0.1;
+    public float $gravity = 0;
 
-    public function getName() : string {
+    public static function getNetworkTypeId() : string{ return EntityIds::NPC; }
+    
+    protected function getInitialSizeInfo() : EntitySizeInfo{
+        return new EntitySizeInfo(0.1, 0.1); //TODO: eye height ??
+    }
+
+    public function getName(): string {
         return "FloatingTextEntity";
     }
 
-    public function initEntity() : void {
-        parent::initEntity();
-        $this->setImmobile(true);
+    public function initEntity(CompoundTag $nbt): void
+    {
+        parent::initEntity($nbt);
+        $this->setNoClientPredictions(true);
         $this->setNameTagAlwaysVisible(true);
         $this->setScale(0.001);
     }
 
-    public function attack(EntityDamageEvent $source): void {
-        $source->setCancelled(true);
+    public function attack(EntityDamageEvent $source): void{
+        $source->cancel();
     }
 
-    public function onUpdate(int $currentTick) : bool {
+    public function onUpdate(int $currentTick): bool {
         $factions = FactionsAPI::getAllPowers();
         arsort($factions);
         $i = 1;
@@ -47,4 +55,12 @@ class FloatingTextEntity extends Entity {
     }
 
     public function tryChangeMovement(): void {}
+
+    public function getInitialDragMultiplier(): float{
+        return 0.0;
+    }
+
+    public function getInitialGravity(): float{
+        return 0.0;
+    }
 }
